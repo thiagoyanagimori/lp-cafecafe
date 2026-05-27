@@ -145,6 +145,9 @@
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
     }
     .nav-hamburger span {
       width: 22px; height: 1px;
@@ -1116,6 +1119,77 @@
       letter-spacing: 0.15em; color: rgba(242,235,224,0.28);
     }
 
+    /* ── MOBILE DRAWER ── */
+    .nav-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(10,5,2,0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1100;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .nav-drawer {
+      position: fixed; top: 0; right: 0;
+      width: min(80vw, 320px); height: 100%;
+      background: #130b04;
+      border-left: 1px solid rgba(196,154,90,0.15);
+      z-index: 1200;
+      display: flex; flex-direction: column;
+      padding: 2rem 2rem 3rem;
+      transform: translateX(100%);
+      transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+    }
+    .nav-open .nav-overlay { display: block; opacity: 1; }
+    .nav-open .nav-drawer  { transform: translateX(0); }
+    .nav-drawer-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2.8rem;
+    }
+    .nav-drawer-close {
+      background: none; border: none; cursor: pointer;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+    }
+    .nav-drawer-close::before,
+    .nav-drawer-close::after {
+      content: ''; position: absolute;
+      width: 18px; height: 1px; background: var(--cream);
+    }
+    .nav-drawer-close::before { transform: rotate(45deg); }
+    .nav-drawer-close::after  { transform: rotate(-45deg); }
+    .nav-drawer-links {
+      list-style: none; display: flex; flex-direction: column; gap: 0;
+      flex: 1;
+    }
+    .nav-drawer-links li a {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-weight: 300;
+      font-size: 1.45rem; letter-spacing: 0.01em;
+      color: var(--cream); text-decoration: none;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid rgba(196,154,90,0.1);
+      transition: color 0.2s;
+    }
+    .nav-drawer-links li a:hover { color: var(--caramel-lt); }
+    .nav-drawer-cta {
+      display: block; margin-top: 2.4rem;
+      text-align: center;
+      font-family: 'Inter', sans-serif; font-weight: 300;
+      font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--caramel-lt); text-decoration: none;
+      border: 1px solid rgba(196,154,90,0.35);
+      padding: 0.85rem 1.2rem;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .nav-drawer-cta:hover {
+      background: rgba(196,154,90,0.1);
+      border-color: rgba(196,154,90,0.6);
+    }
+
   </style>
 </head>
 <body>
@@ -1142,10 +1216,26 @@
     <li><a href="#contato">Contato</a></li>
   </ul>
   <a href="https://wa.me/5511998287836" target="_blank" class="nav-cta">Fale no WhatsApp</a>
-  <div class="nav-hamburger" aria-label="Menu">
+  <button class="nav-hamburger" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-drawer">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-overlay" id="nav-overlay" aria-hidden="true"></div>
+<div class="nav-drawer" id="nav-drawer" role="dialog" aria-label="Menu de navegação" aria-hidden="true">
+  <div class="nav-drawer-head">
+    <a href="#" class="nav-logo" onclick="closeDrawer()"><img src="logo.webp" alt="Café & Café" style="height:44px;width:auto;display:block;"></a>
+    <button class="nav-drawer-close" aria-label="Fechar menu" onclick="closeDrawer()"></button>
+  </div>
+  <ul class="nav-drawer-links">
+    <li><a href="#"         onclick="closeDrawer()">Início</a></li>
+    <li><a href="#cardapio" onclick="closeDrawer()">Cardápio</a></li>
+    <li><a href="#sobre"    onclick="closeDrawer()">Sobre</a></li>
+    <li><a href="#contato"  onclick="closeDrawer()">Contato</a></li>
+  </ul>
+  <a href="https://wa.me/5511998287836" target="_blank" class="nav-drawer-cta">Fale no WhatsApp</a>
+</div>
 
 <!-- SCROLL DRIVER -->
 <div id="scroll-driver">
@@ -2653,8 +2743,35 @@ document.getElementById('cardapio-modal').addEventListener('click', function(e){
 });
 // ESC fecha
 document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape') fecharCardapio();
+  if (e.key === 'Escape') { fecharCardapio(); closeDrawer(); }
 });
+</script>
+
+<script>
+// ── Mobile drawer ────────────────────────────────────────────
+const hamburger = document.querySelector('.nav-hamburger');
+const drawer    = document.getElementById('nav-drawer');
+const overlay   = document.getElementById('nav-overlay');
+
+function openDrawer() {
+  document.body.classList.add('nav-open');
+  document.body.style.overflow = 'hidden';
+  hamburger.setAttribute('aria-expanded', 'true');
+  drawer.setAttribute('aria-hidden', 'false');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+function closeDrawer() {
+  document.body.classList.remove('nav-open');
+  document.body.style.overflow = '';
+  hamburger.setAttribute('aria-expanded', 'false');
+  drawer.setAttribute('aria-hidden', 'true');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+hamburger.addEventListener('click', () => {
+  document.body.classList.contains('nav-open') ? closeDrawer() : openDrawer();
+});
+overlay.addEventListener('click', closeDrawer);
 </script>
 
 </body>
