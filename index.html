@@ -1,0 +1,2661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Café e Café — Confeitaria Artesanal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:       #f2ebe0;
+      --espresso:    #1a0f07;
+      --caramel:     #a67c3a;
+      --caramel-lt:  #c49a5a;
+      --warm-white:  #faf6f0;
+      --muted:       rgba(242,235,224,0.82);
+      --nav-h:       74px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--espresso);
+      color: var(--cream);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       NAVBAR
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      overflow: hidden;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(1.8rem, 4.5vw, 4rem);
+      background: rgba(18, 10, 4, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      border-bottom: 1px solid rgba(196,154,90,0);
+      transition:
+        background 0.7s ease,
+        backdrop-filter 0.7s ease,
+        -webkit-backdrop-filter 0.7s ease,
+        border-color 0.7s ease,
+        box-shadow 0.7s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(18, 10, 4, 0.68);
+      backdrop-filter: blur(24px) saturate(170%);
+      -webkit-backdrop-filter: blur(24px) saturate(170%);
+      border-color: rgba(196,154,90,0.12);
+      box-shadow: 0 1px 48px rgba(0,0,0,0.32);
+    }
+
+    /* Logo */
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.18rem;
+      letter-spacing: 0.02em;
+      color: var(--warm-white);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.28em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-logo .amp {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--caramel-lt);
+      font-size: 1.15em;
+    }
+
+    /* Center links */
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: clamp(2rem, 3.5vw, 3.2rem);
+      list-style: none;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-center a {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(242,235,224,0.68);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 3px;
+      transition: color 0.3s;
+    }
+    .nav-center a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%; right: 50%;
+      height: 1px;
+      background: var(--caramel);
+      transition: left 0.35s cubic-bezier(0.76,0,0.24,1), right 0.35s cubic-bezier(0.76,0,0.24,1);
+    }
+    .nav-center a:hover { color: var(--warm-white); }
+    .nav-center a:hover::after { left: 0; right: 0; }
+
+    /* CTA button */
+    .nav-cta {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.63rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--caramel-lt);
+      border: 1px solid rgba(196,154,90,0.50);
+      border-radius: 100px;
+      padding: 0.6rem 1.5rem;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.35s, color 0.35s, border-color 0.35s;
+    }
+    .nav-cta:hover {
+      background: var(--caramel);
+      border-color: var(--caramel);
+      color: var(--espresso);
+    }
+
+    /* Mobile */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .nav-hamburger span {
+      width: 22px; height: 1px;
+      background: var(--cream);
+      display: block;
+    }
+    @media (max-width: 820px) {
+      .nav-center, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SCROLL DRIVER & STICKY HERO
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #scroll-driver { position: relative; height: 300vh; }
+
+    #hero {
+      position: sticky; top: 0;
+      width: 100%; height: 100vh;
+      overflow: hidden;
+    }
+
+    #film-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      image-rendering: high-quality;
+    }
+
+    /* ── Cinematic overlays ── */
+
+    /* Uniform cinematic dark — matches reference */
+    .ov-ambient {
+      position: absolute; inset: 0;
+      background: rgba(10,5,1,0.48);
+      pointer-events: none;
+    }
+
+    /* Bottom gradient for text readability */
+    .ov-vignette {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,5,1,0.12) 0%,
+        transparent       28%,
+        transparent       50%,
+        rgba(10,5,1,0.38) 76%,
+        rgba(10,5,1,0.70) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Warm film tone */
+    .ov-tone {
+      position: absolute; inset: 0;
+      background: rgba(28,12,2,0.10);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    /* Cinematic letterbox — fade not hard cut */
+    .letterbox-top {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 8vh;
+      background: linear-gradient(to bottom, rgba(14,7,2,0.85) 0%, transparent 100%);
+      pointer-events: none; z-index: 5;
+    }
+    .letterbox-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 8vh;
+      background: linear-gradient(to top, rgba(14,7,2,0.85) 0%, transparent 100%);
+      pointer-events: none; z-index: 5;
+    }
+
+    /* ── Hero layout ── */
+    .hero-content {
+      position: absolute; inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      padding: var(--nav-h) 0 0;
+      will-change: opacity, transform;
+    }
+
+    /* Centered block */
+    .hero-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8vh clamp(1.5rem, 6vw, 5rem) 0;
+      gap: 0;
+      max-width: 780px;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.5rem, 0.85vw, 0.64rem);
+      letter-spacing: 0.52em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      animation: fadeIn 1s 0.7s ease forwards;
+    }
+
+    .hero-title-line1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.6rem, 3.8vw, 4rem);
+      line-height: 1.12;
+      color: var(--warm-white);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1.1s 1.2s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    .hero-amp {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.55em;
+      color: var(--caramel-lt);
+    }
+
+    .hero-title-line2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300;
+      font-size: clamp(2.6rem, 5.8vw, 6.2rem);
+      line-height: 1.05;
+      color: var(--warm-white);
+      letter-spacing: -0.01em;
+      margin-top: 0.08em;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1.1s 1.0s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    /* Ornamental divider */
+    .hero-ornament {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.8rem 0 1.6rem;
+      opacity: 0;
+      animation: fadeIn 1s 1.5s ease forwards;
+    }
+    .hero-ornament-line {
+      width: 48px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--caramel));
+    }
+    .hero-ornament-line:last-child {
+      background: linear-gradient(to left, transparent, var(--caramel));
+    }
+    .hero-ornament-icon {
+      width: 18px; height: 18px;
+      opacity: 0.75;
+    }
+
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.75rem, 1.15vw, 0.9rem);
+      line-height: 1.9;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      max-width: 420px;
+      margin-bottom: 2.6rem;
+      opacity: 0;
+      animation: fadeIn 1s 1.7s ease forwards;
+    }
+    .hero-subtitle .accent {
+      color: var(--caramel-lt);
+      font-style: italic;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.1rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.66rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--warm-white);
+      text-decoration: none;
+      border: 1px solid rgba(196,154,90,0.42);
+      border-radius: 2px;
+      padding: 1.05rem 2.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.45s, border-color 0.45s;
+      opacity: 0;
+      animation: fadeIn 1s 1.95s ease forwards;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--caramel);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.76,0,0.24,1);
+    }
+    .hero-cta:hover { color: var(--espresso); border-color: var(--caramel); }
+    .hero-cta:hover::before { transform: scaleX(1); }
+    .hero-cta span { position: relative; z-index: 1; }
+    .hero-cta-arrow {
+      position: relative; z-index: 1;
+      display: flex; align-items: center;
+      transition: transform 0.35s ease;
+    }
+    .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+    .hero-cta-arrow svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.5; }
+
+    /* Bottom bar */
+    .hero-bottom {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 clamp(1.8rem, 4.5vw, 4rem);
+      padding-bottom: clamp(2rem, 4.5vh, 3.5rem);
+      opacity: 0;
+      animation: fadeIn 1s 2.2s ease forwards;
+    }
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(0.78rem, 1.1vw, 0.95rem);
+      color: rgba(242,235,224,0.32);
+      line-height: 1.6;
+      max-width: 200px;
+    }
+    .hero-scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .hero-scroll-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200;
+      font-size: 0.52rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: rgba(196,154,90,0.55);
+    }
+    .hero-scroll-line {
+      width: 1px; height: 52px;
+      background: linear-gradient(to bottom, rgba(196,154,90,0.6), transparent);
+      animation: scrollPulse 2.5s 2.5s ease-in-out infinite;
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       AFTER HERO
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #after-hero {
+      min-height: 100vh;
+      background: var(--espresso);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .coming-soon {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      color: rgba(196,154,90,0.25);
+      letter-spacing: 0.1em;
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LOADER
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--espresso);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+      transition: opacity 0.9s ease, visibility 0.9s ease;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .loader-brand {
+      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    }
+    .loader-name {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--warm-white);
+      letter-spacing: 0.03em;
+    }
+    .loader-name .amp { color: var(--caramel-lt); font-family: 'Cormorant Garamond', serif; }
+    .loader-sub {
+      font-family: 'Inter', sans-serif; font-weight: 200;
+      font-size: 0.56rem; letter-spacing: 0.5em; text-transform: uppercase;
+      color: rgba(196,154,90,0.6);
+    }
+    .loader-track {
+      width: 180px; height: 1px;
+      background: rgba(196,154,90,0.15);
+      position: relative; overflow: hidden;
+    }
+    .loader-fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      background: linear-gradient(to right, var(--caramel), var(--caramel-lt));
+      width: 0%; transition: width 0.1s ease;
+    }
+    .loader-pct {
+      font-family: 'Inter', sans-serif; font-weight: 200;
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      color: rgba(242,235,224,0.25);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       KEYFRAMES
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity:0.45; transform:scaleY(1); }
+      50%      { opacity:0.9;  transform:scaleY(1.1); }
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       RESPONSIVE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    @media (max-width: 500px) {
+      .hero-tagline { display: none; }
+      .hero-bottom { justify-content: flex-end; }
+      .letterbox-top, .letterbox-bottom { height: 6vh; }
+    }
+    @media (min-width: 1800px) {
+      .hero-title-line1 { font-size: 5.2rem; }
+      .hero-title-line2 { font-size: 6.6rem; }
+    }
+
+    /* ═══════════════════════════════════════════
+       GLOBAL SECTION TOKENS
+    ═══════════════════════════════════════════ */
+    .section-eyebrow {
+      display: block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 200;
+      font-size: clamp(0.5rem, 0.85vw, 0.62rem);
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: 1.2rem;
+    }
+    .section-eyebrow--light { color: rgba(196,154,90,0.7); }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300;
+      font-size: clamp(2.2rem, 4vw, 4rem);
+      line-height: 1.12;
+      color: var(--espresso);
+      margin-bottom: 0;
+    }
+    .section-title em {
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--caramel);
+    }
+    .section-title--light { color: var(--warm-white); }
+
+    /* Scroll reveal */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ═══════════════════════════════════════════
+       SEÇÃO: SOBRE
+    ═══════════════════════════════════════════ */
+    .section-sobre {
+      background: var(--warm-white);
+      padding: clamp(5rem, 10vh, 9rem) clamp(1.5rem, 6vw, 6rem);
+      overflow: hidden;
+    }
+    .sobre-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: center;
+    }
+    .sobre-body {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+      line-height: 1.9;
+      color: rgba(26,15,7,0.65);
+      margin: 1.8rem 0 2.8rem;
+      max-width: 440px;
+    }
+    .sobre-stats {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .stat { display: flex; flex-direction: column; gap: 0.3rem; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      color: var(--caramel);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(26,15,7,0.45);
+    }
+    .stat-divider {
+      width: 1px; height: 40px;
+      background: rgba(196,154,90,0.25);
+      flex-shrink: 0;
+    }
+    .sobre-visual { position: relative; }
+    .sobre-img-frame {
+      width: 100%; aspect-ratio: 4/5;
+      background: linear-gradient(145deg, #2a1505 0%, #5c2e0a 40%, #3a1e08 100%);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .sobre-img-inner {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(196,154,90,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 70%, rgba(92,46,10,0.4) 0%, transparent 50%);
+    }
+    .sobre-img-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(196,154,90,0.08) 0%, transparent 70%);
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    .sobre-badge {
+      position: absolute;
+      bottom: -1.5rem; left: -1.5rem;
+      background: var(--espresso);
+      border: 1px solid rgba(196,154,90,0.25);
+      padding: 1.2rem 1.6rem;
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .badge-year {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300; font-style: italic;
+      font-size: 1.6rem; color: var(--caramel-lt);
+      line-height: 1;
+    }
+    .badge-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200; font-size: 0.6rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(242,235,224,0.45);
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      .sobre-inner { grid-template-columns: 1fr; }
+      .sobre-visual { margin-top: 3rem; }
+    }
+
+    /* ═══════════════════════════════════════════
+       SEÇÃO: CARDÁPIO (preview editorial)
+    ═══════════════════════════════════════════ */
+    .section-cardapio {
+      background: var(--warm-white);
+      padding: clamp(5rem, 10vh, 9rem) clamp(1.5rem, 6vw, 5rem);
+    }
+
+    /* ── Cabeçalho ── */
+    .cardapio-head {
+      max-width: 1200px; margin: 0 auto 3.2rem;
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 2rem;
+    }
+    .cardapio-head-left { flex: 1; min-width: 0; }
+    .cardapio-head-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 3.4vw, 3.4rem);
+      line-height: 1.1; color: var(--espresso);
+      margin-bottom: 0.9rem;
+    }
+    .cardapio-head-title em {
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--caramel);
+    }
+    .cardapio-head-sub {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.78rem;
+      line-height: 1.75; letter-spacing: 0.01em;
+      color: rgba(18,10,4,0.42); max-width: 380px;
+    }
+
+    /* ── Botão CTA ── */
+    .cardapio-cta {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.6rem;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--espresso); text-decoration: none;
+      border: 1px solid rgba(18,10,4,0.22);
+      padding: 0.95rem 2rem; border-radius: 100px;
+      white-space: nowrap; flex-shrink: 0;
+      position: relative; overflow: hidden;
+      transition: color 0.45s ease, border-color 0.45s ease;
+    }
+    .cardapio-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--caramel);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.45s cubic-bezier(0.76,0,0.24,1);
+    }
+    .cardapio-cta:hover::before { transform: scaleX(1); }
+    .cardapio-cta:hover { border-color: var(--caramel); }
+    .cardapio-cta span { position: relative; z-index: 1; }
+    .cardapio-cta-arrow {
+      position: relative; z-index: 1;
+      transition: transform 0.35s ease;
+      font-size: 0.85em; line-height: 1;
+    }
+    .cardapio-cta:hover .cardapio-cta-arrow { transform: translateX(5px); }
+
+    /* ── Grid editorial 5 itens ── */
+    .cardapio-grid-preview {
+      max-width: 1200px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      grid-template-rows: 285px 285px;
+      gap: 10px;
+    }
+    .cp-item {
+      position: relative; overflow: hidden;
+      border-radius: 4px; cursor: pointer;
+    }
+    .cp-item:first-child { grid-row: 1 / 3; }
+
+    .cp-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.75s cubic-bezier(0.22,1,0.36,1);
+    }
+    .cp-item:hover .cp-bg { transform: scale(1.05); }
+
+    .cp-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(12,6,2,0.82) 0%,
+        rgba(12,6,2,0.25) 45%,
+        transparent 100%
+      );
+      transition: opacity 0.4s ease;
+    }
+    .cp-item:hover .cp-overlay { opacity: 0.9; }
+
+    .cp-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.5rem 1.4rem;
+      transform: translateY(calc(100% - 4rem));
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
+    }
+    .cp-item:hover .cp-label { transform: translateY(0); }
+    .cp-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300; font-size: 1.08rem;
+      color: var(--warm-white);
+      letter-spacing: 0.01em; margin-bottom: 0.35rem;
+    }
+    .cp-item:first-child .cp-name { font-size: 1.45rem; }
+
+    .cp-desc {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.78rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.55; margin-bottom: 0.55rem;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
+      display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .cp-item:hover .cp-desc { opacity: 1; transform: translateY(0); }
+
+    .cp-tag {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200; font-size: 0.58rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--caramel-lt);
+      opacity: 0; transform: translateY(7px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .cp-item:hover .cp-tag { opacity: 1; transform: translateY(0); }
+
+    /* ── Divisor dourado sutil ── */
+    .cardapio-divider {
+      max-width: 1200px; margin: 0 auto 3.2rem;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(196,154,90,0.3) 30%, rgba(196,154,90,0.3) 70%, transparent);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .cardapio-head { flex-direction: column; align-items: flex-start; gap: 1.6rem; }
+      .cardapio-grid-preview {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 220px 220px 220px;
+      }
+      .cp-item:first-child { grid-column: 1 / 3; grid-row: 1; }
+    }
+    @media (max-width: 540px) {
+      .cardapio-grid-preview {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5, 240px);
+      }
+      .cp-item:first-child { grid-column: 1; grid-row: 1; }
+      .cp-tag { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       SEÇÃO: NOSSA HISTÓRIA
+    ═══════════════════════════════════════════ */
+    .section-historia {
+      position: relative;
+      background: #0d0804;
+      padding: clamp(5rem, 10vh, 9rem) clamp(1.5rem, 6vw, 6rem);
+      overflow: hidden;
+    }
+    .historia-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(196,154,90,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(92,46,10,0.2) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .historia-inner { max-width: 900px; margin: 0 auto; position: relative; }
+    .historia-header { margin-bottom: 4rem; }
+
+    .timeline { position: relative; margin: 0 0 5rem; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 90px; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(196,154,90,0.3) 10%, rgba(196,154,90,0.3) 90%, transparent);
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 80px 20px 1fr;
+      gap: 0 1.5rem;
+      align-items: start;
+      margin-bottom: 3rem;
+    }
+    .timeline-year {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300; font-style: italic;
+      font-size: 1.3rem; color: var(--caramel);
+      text-align: right; padding-top: 2px;
+      line-height: 1;
+    }
+    .timeline-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--caramel);
+      border: 1px solid rgba(196,154,90,0.4);
+      margin-top: 5px;
+      box-shadow: 0 0 12px rgba(196,154,90,0.35);
+      justify-self: center;
+    }
+    .timeline-content h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 300; font-size: 1rem;
+      color: var(--warm-white); margin-bottom: 0.5rem;
+    }
+    .timeline-content p {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.82rem;
+      line-height: 1.75; color: rgba(242,235,224,0.45);
+    }
+    .historia-quote {
+      border-left: 1px solid rgba(196,154,90,0.35);
+      padding-left: 2rem;
+    }
+    .historia-quote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+      line-height: 1.55; color: rgba(242,235,224,0.65);
+      letter-spacing: 0.02em;
+    }
+
+    /* ═══════════════════════════════════════════
+       SEÇÃO: DEPOIMENTOS
+    ═══════════════════════════════════════════ */
+    .section-depoimentos {
+      background: var(--warm-white);
+      padding: clamp(5rem, 10vh, 9rem) 0;
+      overflow: hidden;
+    }
+    .depoimentos-header {
+      text-align: center;
+      padding: 0 clamp(1.5rem, 6vw, 6rem);
+      margin-bottom: 3.5rem;
+    }
+
+    .carousel-track-wrap {
+      overflow: hidden;
+      padding: 1rem 0 2rem;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 1.5rem;
+      padding: 0 clamp(1.5rem, 6vw, 6rem);
+      transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .depo-card {
+      flex: 0 0 clamp(280px, 38vw, 420px);
+      background: rgba(26,15,7,0.04);
+      border: 1px solid rgba(196,154,90,0.15);
+      border-radius: 2px;
+      padding: 2.2rem;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .depo-card:hover {
+      border-color: rgba(196,154,90,0.35);
+      box-shadow: 0 12px 40px rgba(196,154,90,0.07);
+    }
+    .depo-stars {
+      font-size: 0.75rem; letter-spacing: 0.15em;
+      color: var(--caramel); margin-bottom: 1.2rem;
+    }
+    .depo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+      line-height: 1.65; color: rgba(26,15,7,0.72);
+      margin-bottom: 1.8rem;
+    }
+    .depo-author {
+      display: flex; align-items: center; gap: 0.9rem;
+    }
+    .depo-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--caramel);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem; color: var(--espresso);
+      flex-shrink: 0;
+    }
+    .depo-author strong {
+      display: block; font-family: 'Playfair Display', serif;
+      font-weight: 400; font-size: 0.88rem;
+      color: var(--espresso);
+    }
+    .depo-author span {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200; font-size: 0.62rem;
+      letter-spacing: 0.15em; color: rgba(26,15,7,0.4);
+      text-transform: uppercase;
+    }
+
+    .carousel-dots {
+      display: flex; justify-content: center;
+      gap: 0.5rem; margin-top: 2rem;
+      padding: 0 clamp(1.5rem, 6vw, 6rem);
+    }
+    .carousel-dot {
+      width: 24px; height: 2px;
+      background: rgba(196,154,90,0.25);
+      cursor: pointer; border: none;
+      transition: background 0.3s, width 0.3s;
+    }
+    .carousel-dot.active {
+      background: var(--caramel);
+      width: 40px;
+    }
+
+    /* ═══════════════════════════════════════════
+       SEÇÃO: CONTATO
+    ═══════════════════════════════════════════ */
+    .section-contato {
+      position: relative;
+      background: #0d0804;
+      padding: clamp(5rem, 10vh, 9rem) clamp(1.5rem, 6vw, 6rem);
+      overflow: hidden;
+    }
+    .contato-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 60% at 0% 50%, rgba(92,46,10,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 100% 80%, rgba(196,154,90,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .contato-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: clamp(2rem, 4vw, 5rem);
+      align-items: center; position: relative;
+    }
+    .contato-header { margin-bottom: 1.2rem; }
+    .contato-header .section-title { font-size: clamp(1.8rem, 3vw, 3.2rem); }
+
+    .contato-ornament {
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1.4rem;
+    }
+    .contato-orn-line {
+      width: 36px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--caramel));
+    }
+    .contato-orn-line:last-child {
+      background: linear-gradient(to left, transparent, var(--caramel));
+    }
+    .contato-desc {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.88rem;
+      line-height: 1.8; color: rgba(242,235,224,0.48);
+      margin-bottom: 2rem; max-width: 380px;
+    }
+    .contato-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(196,154,90,0.12);
+      padding: 0 1.6rem;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .contato-item {
+      display: flex; align-items: flex-start; gap: 1.2rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid rgba(196,154,90,0.08);
+    }
+    .contato-item:last-child { border-bottom: none; }
+    .contato-icon {
+      width: 34px; height: 34px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(196,154,90,0.2); border-radius: 50%;
+      color: var(--caramel);
+    }
+    .contato-icon svg { width: 14px; height: 14px; }
+    .contato-label {
+      display: block; font-family: 'Inter', sans-serif;
+      font-weight: 200; font-size: 0.56rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--caramel); margin-bottom: 0.2rem;
+    }
+    .contato-value {
+      display: block; font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.8rem;
+      color: rgba(242,235,224,0.65); line-height: 1.5;
+    }
+    .contato-map-wrap {
+      position: relative;
+      border: 1px solid rgba(196,154,90,0.15);
+      overflow: hidden;
+    }
+    .contato-map {
+      width: 100%; height: 500px;
+      border: none;
+      filter: grayscale(25%) contrast(1.05) brightness(0.85);
+      display: block;
+    }
+    .contato-reserva-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(18,10,4,0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(196,154,90,0.18);
+      padding: 1.1rem 1.6rem;
+      display: flex; align-items: center; gap: 1.2rem;
+    }
+    .reserva-bar-icon { color: var(--caramel); flex-shrink: 0; opacity: 0.85; }
+    .reserva-bar-text { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+    .reserva-bar-text strong {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400; font-size: 0.95rem; color: var(--warm-white);
+    }
+    .reserva-bar-text span {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.7rem;
+      color: rgba(242,235,224,0.45); letter-spacing: 0.02em;
+    }
+    .reserva-bar-btns {
+      display: flex; gap: 0.6rem; flex-shrink: 0; flex-wrap: wrap;
+    }
+    .reserva-bar-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300; font-size: 0.62rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--espresso); background: var(--caramel);
+      padding: 0.7rem 1.2rem;
+      text-decoration: none; white-space: nowrap;
+      transition: background 0.3s;
+    }
+    .reserva-bar-btn:hover { background: var(--caramel-lt); }
+    .reserva-bar-btn--outline {
+      background: transparent;
+      color: var(--caramel-lt);
+      border: 1px solid rgba(196,154,90,0.45);
+    }
+    .reserva-bar-btn--outline:hover {
+      background: rgba(196,154,90,0.12);
+      color: var(--warm-white);
+    }
+    .contato-link {
+      color: var(--caramel-lt) !important;
+      text-decoration: none; transition: color 0.3s;
+    }
+    .contato-link:hover { color: var(--warm-white) !important; }
+
+    @media (max-width: 768px) {
+      .contato-inner { grid-template-columns: 1fr; }
+      .contato-map { height: 300px; }
+      .contato-reserva-bar { flex-wrap: wrap; }
+    }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
+    .site-footer {
+      background: var(--espresso);
+      border-top: 1px solid rgba(196,154,90,0.1);
+      padding: 2.5rem clamp(1.5rem, 6vw, 6rem);
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-weight: 300;
+      font-size: 1.1rem; color: var(--warm-white);
+    }
+    .footer-logo .amp { color: var(--caramel-lt); font-family: 'Cormorant Garamond', serif; }
+    .footer-copy, .footer-tagline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 200; font-size: 0.62rem;
+      letter-spacing: 0.15em; color: rgba(242,235,224,0.28);
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-brand">
+    <div class="loader-name">Café <span class="amp">&amp;</span> Café</div>
+    <div class="loader-sub">Confeitaria Artesanal</div>
+  </div>
+  <div class="loader-track">
+    <div class="loader-fill" id="loader-fill"></div>
+  </div>
+  <div class="loader-pct" id="loader-label">0%</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo"><img src="logo.webp" alt="Café & Café" style="height:58px;width:auto;display:block;"></a>
+  <ul class="nav-center">
+    <li><a href="#">Início</a></li>
+    <li><a href="#cardapio">Cardápio</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a href="https://wa.me/5511998287836" target="_blank" class="nav-cta">Fale no WhatsApp</a>
+  <div class="nav-hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- SCROLL DRIVER -->
+<div id="scroll-driver">
+  <section id="hero">
+    <canvas id="film-canvas"></canvas>
+    <div class="ov-tone"></div>
+    <div class="ov-vignette"></div>
+    <div class="ov-ambient"></div>
+    <div class="letterbox-top"></div>
+    <div class="letterbox-bottom"></div>
+
+    <div class="hero-content">
+      <div class="hero-center">
+        <p class="hero-eyebrow">Desde 2002 &nbsp;·&nbsp; Osasco</p>
+
+
+
+        <div class="hero-title-line2">Café <span class="hero-amp">&amp;</span> Café</div>
+        <div class="hero-title-line1">Mais que uma cafeteria</div>
+
+        <!-- Ornamental divider with leaf icon -->
+        <div class="hero-ornament">
+          <div class="hero-ornament-line"></div>
+          <svg class="hero-ornament-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C12 22 4 16 4 9C4 5.13 7.58 2 12 2C16.42 2 20 5.13 20 9C20 16 12 22 12 22Z" stroke="#c49a5a" stroke-width="1" fill="none"/>
+            <path d="M12 2 L12 22" stroke="#c49a5a" stroke-width="0.75" opacity="0.5"/>
+            <path d="M4 9 Q12 12 20 9" stroke="#c49a5a" stroke-width="0.75" fill="none" opacity="0.5"/>
+          </svg>
+          <div class="hero-ornament-line"></div>
+        </div>
+
+        <p class="hero-subtitle">
+          Confeitaria artesanal e bolos especiais,<br>
+          feitos para <span class="accent">encantar</span> antes da primeira mordida.
+        </p>
+
+        <a href="#cardapio" class="hero-cta">
+          <span>Conheça nossas delícias</span>
+          <span class="hero-cta-arrow">
+            <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="hero-bottom">
+        <p class="hero-tagline">Onde cada detalhe<br>é feito com intenção.</p>
+        <div class="hero-scroll">
+          <span class="hero-scroll-label">Role para explorar</span>
+          <div class="hero-scroll-line"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SEÇÃO: SOBRE
+═══════════════════════════════════════════ -->
+<section id="sobre" class="section-sobre">
+  <div class="sobre-inner">
+    <div class="sobre-text" data-reveal>
+      <span class="section-eyebrow">Nossa Essência</span>
+      <h2 class="section-title">Mais que<br><em>confeitaria.</em></h2>
+      <p class="sobre-body">
+        Desde 2002, o Café & Café transforma receitas artesanais em bolos que marcam momentos. Cada fatia é preparada com cuidado, ingredientes selecionados e o sabor caseiro que tornou a casa uma referência em confeitaria.
+      </p>
+      <div class="sobre-stats">
+        <div class="stat">
+          <span class="stat-num">24</span>
+          <span class="stat-label">Anos de história</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">40+</span>
+          <span class="stat-label">Receitas exclusivas</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Momentos criados</span>
+        </div>
+      </div>
+    </div>
+    <div class="sobre-visual" data-reveal data-delay="0.2">
+      <div class="sobre-img-frame">
+        <div class="sobre-img-inner">
+          <img src="inside.webp" alt="Interior do Café & Café" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+        </div>
+        <div class="sobre-img-glow"></div>
+      </div>
+      <div class="sobre-badge">
+        <span class="badge-year">2002</span>
+        <span class="badge-text">Fundado em<br>Osasco, SP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEÇÃO: CARDÁPIO
+═══════════════════════════════════════════ -->
+<section id="cardapio" class="section-cardapio">
+
+  <!-- Cabeçalho -->
+  <div class="cardapio-head" data-reveal>
+    <div class="cardapio-head-left">
+      <span class="section-eyebrow">Nossa Vitrine</span>
+      <h2 class="cardapio-head-title">Um gostinho do <em>Cardápio</em></h2>
+      <p class="cardapio-head-sub">Uma seleção dos nossos mais pedidos. Clique para ver o cardápio completo com todos os preços.</p>
+    </div>
+    <button onclick="abrirCardapio()" class="cardapio-cta" type="button" style="background:none;border:1px solid var(--espresso);cursor:pointer;">
+      <span>Ver Cardápio Completo</span>
+      <span class="cardapio-cta-arrow">→</span>
+    </button>
+  </div>
+
+  <!-- Divisor dourado -->
+  <div class="cardapio-divider"></div>
+
+  <!-- Grid editorial 5 itens -->
+  <div class="cardapio-grid-preview" data-reveal data-delay="0.15">
+    <!-- Item 1 — destaque, ocupa as 2 linhas -->
+    <div class="cp-item">
+      <div class="cp-bg">
+        <img src="01.webp" alt="Torta de Morango" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+      </div>
+      <div class="cp-overlay"></div>
+      <div class="cp-label">
+        <p class="cp-name">Torta de Morango</p>
+        <p class="cp-desc">Base crocante envolta em amendoim, recheada com creme artesanal e coroada por morangos frescos em calda brilhante. Feita para impressionar.</p>
+        <span class="cp-tag">Confeitaria</span>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="cp-item">
+      <div class="cp-bg">
+        <img src="02.webp" alt="Bolo de Maracujá" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+      </div>
+      <div class="cp-overlay"></div>
+      <div class="cp-label">
+        <p class="cp-name">Bolo de Maracujá</p>
+        <p class="cp-desc">Bolo gelado de massa fofinha com cobertura branca cremosa, recheio de maracujá.</p>
+        <span class="cp-tag">Confeitaria</span>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="cp-item">
+      <div class="cp-bg">
+        <img src="03.webp" alt="Torta de Chocolate com Chantilly" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+      </div>
+      <div class="cp-overlay"></div>
+      <div class="cp-label">
+        <p class="cp-name">Torta de Chocolate com Chantilly</p>
+        <p class="cp-desc">Fatia generosa com camadas alternadas de bolo de cacau intenso e chantilly artesanal, finalizada com ganache e raspas de chocolate.</p>
+        <span class="cp-tag">Confeitaria</span>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="cp-item">
+      <div class="cp-bg">
+        <img src="04.webp" alt="Bolo de Coco" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+      </div>
+      <div class="cp-overlay"></div>
+      <div class="cp-label">
+        <p class="cp-name">Bolo de Coco</p>
+        <p class="cp-desc">Todo coberto de coco fresco ralado, com recheio cremoso e beijinho artesanal no topo. Harmoniza perfeitamente com um café coado fresquinho.</p>
+        <span class="cp-tag">Confeitaria</span>
+      </div>
+    </div>
+
+    <!-- Item 5 -->
+    <div class="cp-item">
+      <div class="cp-bg">
+        <img src="05.webp" alt="Coxinha" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
+      </div>
+      <div class="cp-overlay"></div>
+      <div class="cp-label">
+        <p class="cp-name">Coxinha</p>
+        <p class="cp-desc">Crocante por fora, recheada com frango desfiado temperado. O salgado mais pedido da casa — servido quentinho o dia todo.</p>
+        <span class="cp-tag">Salgados</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEÇÃO: NOSSA HISTÓRIA
+═══════════════════════════════════════════ -->
+<section id="historia" class="section-historia">
+  <div class="historia-bg"></div>
+  <div class="historia-inner">
+    <div class="historia-header" data-reveal>
+      <span class="section-eyebrow section-eyebrow--light">Nossa Trajetória</span>
+      <h2 class="section-title section-title--light">Cada ano,<br><em>uma história.</em></h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item" data-reveal data-delay="0.0">
+        <div class="timeline-year">2002</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>O começo</h4>
+          <p>Uma pequena confeitaria nasce em Osasco com o sonho de oferecer bolos e café de verdade.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-reveal data-delay="0.15">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Expansão</h4>
+          <p>Inauguramos nosso espaço atual, com ambiente acolhedor para reuniões e momentos especiais.</p>
+        </div>
+      </div>
+      <div class="timeline-item" data-reveal data-delay="0.45">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>Hoje</h4>
+          <p>Mais de duas décadas criando experiências, com o mesmo cuidado e amor do primeiro dia.</p>
+        </div>
+      </div>
+    </div>
+    <div class="historia-quote" data-reveal data-delay="0.6">
+      <blockquote>"Desde 2002, cada detalhe foi pensado para transformar bolos artesanais em momentos inesquecíveis."</blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEÇÃO: DEPOIMENTOS
+═══════════════════════════════════════════ -->
+<section id="depoimentos" class="section-depoimentos">
+  <div class="depoimentos-header" data-reveal>
+    <span class="section-eyebrow">O que dizem sobre nós</span>
+    <h2 class="section-title">Experiências <em>reais</em></h2>
+  </div>
+  <div class="carousel-track-wrap">
+    <div class="carousel-track" id="carousel-track">
+      <div class="depo-card">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"Os bolos do Café & Café são simplesmente inesquecíveis. Dá para sentir o cuidado em cada detalhe, desde a apresentação até o sabor."</p>
+        <div class="depo-author">
+          <div class="depo-avatar">M</div>
+          <div><strong>Marina S.</strong><span>Cliente desde 2018</span></div>
+        </div>
+      </div>
+      <div class="depo-card">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"A confeitaria artesanal é simplesmente incrível. O croissant é o melhor que já comi fora da França. Voltarei sempre."</p>
+        <div class="depo-author">
+          <div class="depo-avatar">R</div>
+          <div><strong>Rafael M.</strong><span>Cliente desde 2020</span></div>
+        </div>
+      </div>
+      <div class="depo-card">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"Cada visita é uma experiência única. O cuidado com os detalhes, desde o atendimento até a apresentação dos pratos, é impecável."</p>
+        <div class="depo-author">
+          <div class="depo-avatar">A</div>
+          <div><strong>Ana L.</strong><span>Cliente desde 2015</span></div>
+        </div>
+      </div>
+      <div class="depo-card">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"Meu ritual de domingo perfeito. O brunch é completo e os cafés especiais são preparados com uma atenção que poucos lugares têm."</p>
+        <div class="depo-author">
+          <div class="depo-avatar">C</div>
+          <div><strong>Carlos B.</strong><span>Cliente desde 2019</span></div>
+        </div>
+      </div>
+      <div class="depo-card">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"Ambiente único em Osasco. Parece que você está em uma cafeteria europeia. Os doces são obras de arte tanto visualmente quanto no sabor."</p>
+        <div class="depo-author">
+          <div class="depo-avatar">P</div>
+          <div><strong>Priya T.</strong><span>Cliente desde 2022</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="carousel-dots" id="carousel-dots"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SEÇÃO: CONTATO
+═══════════════════════════════════════════ -->
+<section id="contato" class="section-contato">
+  <div class="contato-bg"></div>
+  <div class="contato-inner">
+    <div class="contato-left" data-reveal>
+      <div class="contato-header">
+        <span class="section-eyebrow section-eyebrow--light">Venha nos visitar</span>
+        <h2 class="section-title section-title--light">Onde<br><em>estamos.</em></h2>
+      </div>
+      <div class="contato-ornament">
+        <div class="contato-orn-line"></div>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+          <path d="M12 22C12 22 4 16 4 9C4 5.13 7.58 2 12 2C16.42 2 20 5.13 20 9C20 16 12 22 12 22Z" stroke="#c49a5a" stroke-width="1" fill="none"/>
+          <path d="M12 2 L12 22" stroke="#c49a5a" stroke-width="0.75" opacity="0.5"/>
+          <path d="M4 9 Q12 12 20 9" stroke="#c49a5a" stroke-width="0.75" fill="none" opacity="0.5"/>
+        </svg>
+        <div class="contato-orn-line"></div>
+      </div>
+      <p class="contato-desc">Será um prazer receber você para um café,<br>conversa e momentos especiais.</p>
+      <div class="contato-card">
+        <div class="contato-item">
+          <div class="contato-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <div>
+            <span class="contato-label">Endereço</span>
+            <span class="contato-value">Av. Santo Antônio, 2757 — Osasco, SP</span>
+          </div>
+        </div>
+        <div class="contato-item">
+          <div class="contato-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <span class="contato-label">Horário</span>
+            <span class="contato-value">Seg–Sáb: 7h30–19h30</span>
+          </div>
+        </div>
+        <div class="contato-item">
+          <div class="contato-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.61 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.09 4.18 2 2 0 0 1 5.08 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <span class="contato-label">Telefone</span>
+            <span class="contato-value">(11) 3689-1070</span>
+          </div>
+        </div>
+        <div class="contato-item">
+          <div class="contato-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <span class="contato-label">WhatsApp</span>
+            <a href="https://wa.me/5511998287836" target="_blank" class="contato-value contato-link">+55 11 99828-7836</a>
+          </div>
+        </div>
+        <div class="contato-item">
+          <div class="contato-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <span class="contato-label">Instagram</span>
+            <a href="https://instagram.com/cafecafeconfeitaria" target="_blank" class="contato-value contato-link">@cafecafeconfeitaria</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contato-right contato-map-wrap" data-reveal data-delay="0.2">
+      <iframe
+        class="contato-map"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.4!2d-46.7919!3d-23.5328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ceff4b6c6c6c6b%3A0x0!2sAv.+Santo+Ant%C3%B4nio%2C+2757%2C+Osasco%2C+SP!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <div class="contato-reserva-bar">
+        <div class="reserva-bar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="28" height="28">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="reserva-bar-text">
+          <strong>Venha nos visitar</strong>
+          <span>Estamos esperando por você em Osasco, SP.</span>
+        </div>
+        <div class="reserva-bar-btns">
+          <a href="https://maps.google.com/?q=Av.+Santo+Antonio,+2757,+Osasco,+SP" target="_blank" class="reserva-bar-btn reserva-bar-btn--outline">
+            Como chegar
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="https://wa.me/5511998287836?text=Olá,%20gostaria%20de%20mais%20informações!" target="_blank" class="reserva-bar-btn">
+            Fale no WhatsApp
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-logo"><img src="logo.webp" alt="Café & Café" style="height:68px;width:auto;display:block;"></span>
+    <span class="footer-copy">© 2026 Café &amp; Café. Todos os direitos reservados.</span>
+    <span class="footer-tagline">Desenvolvido por Thiago Yanagimori</span>
+  </div>
+</footer>
+
+<script>
+const FRAMES = [
+"frames/f000.webp",
+"frames/f001.webp",
+"frames/f002.webp",
+"frames/f003.webp",
+"frames/f004.webp",
+"frames/f005.webp",
+"frames/f006.webp",
+"frames/f007.webp",
+"frames/f008.webp",
+"frames/f009.webp",
+"frames/f010.webp",
+"frames/f011.webp",
+"frames/f012.webp",
+"frames/f013.webp",
+"frames/f014.webp",
+"frames/f015.webp",
+"frames/f016.webp",
+"frames/f017.webp",
+"frames/f018.webp",
+"frames/f019.webp",
+"frames/f020.webp",
+"frames/f021.webp",
+"frames/f022.webp",
+"frames/f023.webp",
+"frames/f024.webp",
+"frames/f025.webp",
+"frames/f026.webp",
+"frames/f027.webp",
+"frames/f028.webp",
+"frames/f029.webp",
+"frames/f030.webp",
+"frames/f031.webp",
+"frames/f032.webp",
+"frames/f033.webp",
+"frames/f034.webp",
+"frames/f035.webp",
+"frames/f036.webp",
+"frames/f037.webp",
+"frames/f038.webp",
+"frames/f039.webp",
+"frames/f040.webp",
+"frames/f041.webp",
+"frames/f042.webp",
+"frames/f043.webp",
+"frames/f044.webp",
+"frames/f045.webp",
+"frames/f046.webp",
+"frames/f047.webp",
+"frames/f048.webp",
+"frames/f049.webp",
+"frames/f050.webp",
+"frames/f051.webp",
+"frames/f052.webp",
+"frames/f053.webp",
+"frames/f054.webp",
+"frames/f055.webp",
+"frames/f056.webp",
+"frames/f057.webp",
+"frames/f058.webp",
+"frames/f059.webp",
+"frames/f060.webp",
+"frames/f061.webp",
+"frames/f062.webp",
+"frames/f063.webp",
+"frames/f064.webp",
+"frames/f065.webp",
+"frames/f066.webp",
+"frames/f067.webp",
+"frames/f068.webp",
+"frames/f069.webp",
+"frames/f070.webp",
+"frames/f071.webp",
+"frames/f072.webp",
+"frames/f073.webp",
+"frames/f074.webp",
+"frames/f075.webp",
+"frames/f076.webp",
+"frames/f077.webp",
+"frames/f078.webp",
+"frames/f079.webp",
+"frames/f080.webp",
+"frames/f081.webp",
+"frames/f082.webp",
+"frames/f083.webp",
+"frames/f084.webp",
+"frames/f085.webp",
+"frames/f086.webp",
+"frames/f087.webp",
+"frames/f088.webp",
+"frames/f089.webp",
+"frames/f090.webp",
+"frames/f091.webp",
+"frames/f092.webp",
+"frames/f093.webp",
+"frames/f094.webp",
+"frames/f095.webp",
+"frames/f096.webp",
+"frames/f097.webp",
+"frames/f098.webp",
+"frames/f099.webp",
+"frames/f100.webp",
+"frames/f101.webp",
+"frames/f102.webp",
+"frames/f103.webp",
+"frames/f104.webp",
+"frames/f105.webp",
+"frames/f106.webp",
+"frames/f107.webp",
+"frames/f108.webp",
+"frames/f109.webp",
+"frames/f110.webp",
+"frames/f111.webp",
+"frames/f112.webp",
+"frames/f113.webp",
+"frames/f114.webp",
+"frames/f115.webp",
+"frames/f116.webp",
+"frames/f117.webp"
+];
+
+const TOTAL_FRAMES = FRAMES.length;
+const EASE_AMOUNT  = 0.10;
+
+// ── Canvas ──────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('film-canvas');
+const ctx    = canvas.getContext('2d', { alpha: false });
+
+let W = 0, H = 0;
+function resizeCanvas() {
+  W = canvas.width  = window.innerWidth  * window.devicePixelRatio;
+  H = canvas.height = window.innerHeight * window.devicePixelRatio;
+  canvas.style.width  = window.innerWidth  + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); renderFrame(Math.round(currentIndex)); });
+
+// ── Preload ──────────────────────────────────────────────────────────────────
+const images = new Array(TOTAL_FRAMES);
+let loaded = 0;
+const loaderFill  = document.getElementById('loader-fill');
+const loaderLabel = document.getElementById('loader-label');
+const loaderEl    = document.getElementById('loader');
+
+function onAllLoaded() {
+  loaderLabel.textContent = '100%';
+  loaderFill.style.width = '100%';
+  renderFrame(0);
+  setTimeout(() => { loaderEl.classList.add('hidden'); startRAF(); }, 500);
+}
+
+const CRITICAL = 6;  // frames to load before showing anything
+function loadFrame(i) {
+  const img = new Image();
+  img.onload = () => {
+    loaded++;
+    const pct = Math.round(loaded / TOTAL_FRAMES * 100);
+    loaderFill.style.width = pct + '%';
+    loaderLabel.textContent = pct + '%';
+    if (loaded === TOTAL_FRAMES) onAllLoaded();
+  };
+  img.src = FRAMES[i];
+  images[i] = img;
+}
+// Critical path: first few frames synchronously
+for (let i = 0; i < Math.min(CRITICAL, TOTAL_FRAMES); i++) loadFrame(i);
+// Rest: deferred to avoid blocking initial render
+requestIdleCallback
+  ? requestIdleCallback(() => { for (let i = CRITICAL; i < TOTAL_FRAMES; i++) loadFrame(i); }, { timeout: 3000 })
+  : setTimeout(() => { for (let i = CRITICAL; i < TOTAL_FRAMES; i++) loadFrame(i); }, 100);
+
+// ── Draw cover-fit at full DPR resolution ────────────────────────────────────
+function renderFrame(idx) {
+  const img = images[idx];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  const iAR = img.naturalWidth / img.naturalHeight;
+  const cAR = W / H;
+  let dw, dh, dx, dy;
+  if (iAR > cAR) { dh = H; dw = H * iAR; } 
+  else            { dw = W; dh = W / iAR; }
+  dx = (W - dw) / 2;
+  dy = (H - dh) / 2;
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+
+// ── Scroll → frame ────────────────────────────────────────────────────────────
+let targetIndex  = 0;
+let currentIndex = 0;
+let rafId = null;
+
+function getTargetFrame() {
+  const driver  = document.getElementById('scroll-driver');
+  const total   = driver.offsetHeight - window.innerHeight;
+  const scrolled = Math.max(0, window.scrollY);
+  return Math.min(1, scrolled / total) * (TOTAL_FRAMES - 1);
+}
+
+function tick() {
+  targetIndex  = getTargetFrame();
+  currentIndex += (targetIndex - currentIndex) * EASE_AMOUNT;
+  renderFrame(Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.round(currentIndex))));
+  rafId = requestAnimationFrame(tick);
+}
+
+function startRAF() { if (!rafId) rafId = requestAnimationFrame(tick); }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { cancelAnimationFrame(rafId); rafId = null; }
+  else startRAF();
+});
+</script>
+<script>
+// Navbar scroll glass effect
+const _nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  _nav.classList.toggle('scrolled', window.scrollY > 50);
+
+  // Fade out hero content on scroll
+  const driver  = document.getElementById('scroll-driver');
+  const total   = driver.offsetHeight - window.innerHeight;
+  const progress = Math.min(1, window.scrollY / (total * 0.60));
+  const opacity  = 1 - progress;
+  const translateY = progress * 24;
+  document.querySelector('.hero-content').style.opacity  = opacity;
+  document.querySelector('.hero-content').style.transform = `translateY(-${translateY}px)`;
+}, { passive: true });
+</script>
+
+<script>
+// ── Scroll Reveal ────────────────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const delay = parseFloat(el.dataset.delay || 0) * 1000;
+      setTimeout(() => el.classList.add('revealed'), delay);
+      revealObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+// ── Cardápio Tabs ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-card').forEach(card => {
+      const show = card.dataset.category === tab;
+      card.style.display = show ? 'block' : 'none';
+      if (show) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 30);
+      }
+    });
+  });
+});
+
+// ── Carousel ──────────────────────────────────────────────────────────────────
+(function() {
+  const track  = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+  if (!track) return;
+
+  const cards      = track.querySelectorAll('.depo-card');
+  const total      = cards.length;
+  let   current    = 0;
+  let   autoTimer  = null;
+
+  // Build dots
+  cards.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function getCardW() {
+    return cards[0].getBoundingClientRect().width + 24; // gap 1.5rem ≈ 24px
+  }
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    const offset = current * getCardW();
+    track.style.transform = `translateX(-${offset}px)`;
+    dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function next() { goTo(current + 1); }
+
+  // Auto-play removido
+
+  // Touch swipe
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) dx < 0 ? next() : goTo(current - 1);
+  });
+})();
+</script>
+
+
+<!-- ══════════════════════════════════════════════
+     MODAL — CARDÁPIO COMPLETO
+══════════════════════════════════════════════ -->
+<style>
+/* ── Overlay ── */
+#cardapio-modal {
+  display: none;
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(8, 4, 2, 0.84);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.8rem 1rem;
+  overflow-y: auto;
+}
+#cardapio-modal.aberto { display: flex; }
+
+/* ── Painel ── */
+.cm-painel {
+  background: #f8f4ef;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 980px;
+  box-shadow: 0 52px 130px rgba(8,4,2,0.58), 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: hidden;
+  position: relative;
+  margin: auto;
+  animation: cmEntrar 0.48s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes cmEntrar {
+  from { opacity:0; transform: translateY(38px) scale(0.96); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header sticky ── */
+.cm-header {
+  background: linear-gradient(145deg, #110905 0%, #1a0f07 55%, #201308 100%);
+  padding: 2.3rem 2.8rem 2.1rem;
+  position: sticky; top: 0; z-index: 10;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05);
+}
+.cm-titulo {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.65rem, 3.6vw, 2.35rem);
+  font-weight: 300;
+  color: #f8f4ef;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.cm-ornament {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.55rem;
+}
+.cm-ornament-line {
+  height: 1px;
+  background: rgba(196,154,90,0.42);
+  flex: 1;
+}
+.cm-ornament-line:first-child { max-width: 28px; }
+.cm-ornament-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(196,154,90,0.65);
+  white-space: nowrap;
+}
+.cm-fechar {
+  position: absolute; top: 1.9rem; right: 2.1rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 50%;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: rgba(248,244,239,0.82);
+  font-size: 0.9rem; line-height: 1;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+.cm-fechar:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.36);
+  color: #f8f4ef;
+}
+
+/* ── Pills ── */
+.cm-pills { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+.cm-pill {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300; font-size: 0.67rem;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  padding: 0.48rem 1.28rem;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.24);
+  background: transparent;
+  color: rgba(255,255,255,0.62);
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+.cm-pill:hover {
+  border-color: rgba(255,255,255,0.52);
+  color: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.07);
+}
+.cm-pill.ativo {
+  background: #f8f4ef;
+  border-color: #f8f4ef;
+  color: #1a0f07;
+  font-weight: 400;
+}
+
+/* ── Body ── */
+.cm-body { background: #f8f4ef; }
+
+/* ── Seções ── */
+.cm-secao { display: none; }
+.cm-secao.visivel { display: block; }
+
+/* ── Hero image ── */
+.cm-hero {
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+}
+.cm-hero img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 35%;
+  display: block;
+  transition: transform 9s ease;
+}
+.cm-secao.visivel .cm-hero img { transform: scale(1.05); }
+.cm-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    170deg,
+    rgba(8,4,2,0.06) 0%,
+    rgba(8,4,2,0.08) 38%,
+    rgba(8,4,2,0.55) 70%,
+    rgba(8,4,2,0.82) 100%
+  );
+}
+.cm-hero-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 1.8rem 2.8rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.cm-hero-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: #f8f4ef;
+  line-height: 1;
+}
+.cm-hero-price .lbl {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-size: 0.56rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(248,244,239,0.52);
+  margin-bottom: 0.38rem;
+}
+.cm-hero-price .val {
+  font-size: clamp(2.4rem, 5.8vw, 3.3rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+.cm-hero-price .val small {
+  font-size: 0.5em;
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+.cm-hero-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.57rem; font-weight: 300;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: #c49a5a;
+  border: 1px solid rgba(196,154,90,0.48);
+  padding: 0.44rem 1.05rem;
+  border-radius: 100px;
+  background: rgba(8,4,2,0.32);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── Intro strip ── */
+.cm-intro {
+  padding: 1.7rem 2.8rem 1.45rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(26,15,7,0.07);
+  gap: 1rem;
+}
+.cm-intro-desc {
+  font-family: 'Inter', sans-serif;
+  font-weight: 200; font-size: 0.65rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(26,15,7,0.36);
+}
+.cm-intro-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 0.9rem; font-weight: 300;
+  color: rgba(26,15,7,0.26);
+  white-space: nowrap;
+}
+
+/* ── Items grid ── */
+.cm-lista {
+  padding: 0.5rem 2.8rem 3.4rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0;
+}
+.cm-item {
+  padding: 1.65rem 2rem 1.65rem 0;
+  border-bottom: 1px solid rgba(26,15,7,0.065);
+}
+.cm-item:nth-child(even) {
+  padding-right: 0;
+  padding-left: 2.2rem;
+  border-left: 1px solid rgba(26,15,7,0.065);
+}
+.cm-item:last-child { border-bottom: none; }
+.cm-item:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+
+.cm-item-idx {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-weight: 300; font-size: 0.66rem;
+  color: rgba(196,154,90,0.52);
+  margin-bottom: 0.38rem;
+  letter-spacing: 0.04em;
+}
+.cm-item-nome {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400; font-size: 1.03rem;
+  color: #1a0f07;
+  margin-bottom: 0.44rem;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
+}
+.cm-item-desc {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300; font-size: 0.7rem;
+  line-height: 1.74;
+  color: rgba(26,15,7,0.44);
+}
+.cm-alcool {
+  display: inline-flex; align-items: center; gap: 0.32em;
+  margin-top: 0.32rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.56rem; font-weight: 300; letter-spacing: 0.05em;
+  color: rgba(26,15,7,0.33);
+}
+.cm-alcool::before {
+  content: '◆'; font-size: 0.38rem;
+  color: rgba(196,154,90,0.48);
+}
+
+/* ── Responsivo ── */
+@media (max-width: 680px) {
+  .cm-header { padding: 1.8rem 1.6rem 1.6rem; }
+  .cm-fechar { top: 1.6rem; right: 1.4rem; }
+  .cm-hero { height: 230px; }
+  .cm-hero-content { padding: 1.4rem 1.6rem; }
+  .cm-hero-price .val { font-size: 2.1rem; }
+  .cm-intro { padding: 1.4rem 1.6rem 1.2rem; flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+  .cm-lista { padding: 0.3rem 1.6rem 2.6rem; grid-template-columns: 1fr; }
+  .cm-item { padding-right: 0; }
+  .cm-item:nth-child(even) { padding-left: 0; border-left: none; }
+  .cm-item:nth-last-child(2):nth-child(odd) { border-bottom: 1px solid rgba(26,15,7,0.065); }
+}
+</style>
+
+<div id="cardapio-modal" role="dialog" aria-modal="true" aria-label="Cardápio Completo">
+  <div class="cm-painel">
+
+    <!-- Header -->
+    <div class="cm-header">
+      <p class="cm-titulo">Cardápio Completo</p>
+      <div class="cm-ornament">
+        <div class="cm-ornament-line"></div>
+        <span class="cm-ornament-text">Confeitaria Artesanal</span>
+        <div class="cm-ornament-line"></div>
+      </div>
+      <button class="cm-fechar" onclick="fecharCardapio()" aria-label="Fechar">✕</button>
+      <div class="cm-pills">
+        <button class="cm-pill ativo" onclick="trocarTier(this,'t102')">R$ 102/kg</button>
+        <button class="cm-pill"       onclick="trocarTier(this,'t115')">R$ 115/kg</button>
+        <button class="cm-pill"       onclick="trocarTier(this,'t129')">R$ 129/kg</button>
+        <button class="cm-pill"       onclick="trocarTier(this,'t137')">R$ 137/kg</button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="cm-body">
+
+      <!-- ══ TIER R$102 ══ -->
+      <div id="t102" class="cm-secao visivel">
+        <div class="cm-hero">
+          <img src="102.webp" alt="Bolos R$102/kg" loading="lazy">
+          <div class="cm-hero-overlay"></div>
+          <div class="cm-hero-content">
+            <div class="cm-hero-price">
+              <span class="lbl">Faixa de preço</span>
+              <span class="val">R$ 102<small>,00/kg</small></span>
+            </div>
+            <span class="cm-hero-badge">Clássicos</span>
+          </div>
+        </div>
+        <div class="cm-intro">
+          <span class="cm-intro-desc">Sabores clássicos artesanais</span>
+          <span class="cm-intro-count">07 sabores</span>
+        </div>
+        <div class="cm-lista">
+          <div class="cm-item">
+            <span class="cm-item-idx">01</span>
+            <p class="cm-item-nome">Brigadeiro</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro, cobertura de chocolate, granulado, brigadeiro boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">02</span>
+            <p class="cm-item-nome">Cocada</p>
+            <p class="cm-item-desc">Massa branca, recheio de cocada cremosa, cobertura de chantilly, coco, beijinho boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">03</span>
+            <p class="cm-item-nome">Crocante</p>
+            <p class="cm-item-desc">Massa branca, recheio de amendoim caramelizado com doce de leite, cobertura de chantilly, geleia de caramelo, amendoim e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">04</span>
+            <p class="cm-item-nome">Mousse de Limão</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de limão, cobertura de chantilly, raspas de limão, rodelas de limão e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">05</span>
+            <p class="cm-item-nome">Mousse de Maracujá</p>
+            <p class="cm-item-desc">Massa branca embebida em calda de maracujá, recheio de mousse de maracujá, cobertura de chantilly, geleia de maracujá, raspas de chocolate branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">06</span>
+            <p class="cm-item-nome">Pêssego com Creme</p>
+            <p class="cm-item-desc">Massa branca, recheio de pêssego com creme, cobertura de chantilly, coco, pêssego e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">07</span>
+            <p class="cm-item-nome">Prestígio</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de cocada cremosa, cobertura de chocolate, granulado, beijinho boleado e cereja.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TIER R$115 ══ -->
+      <div id="t115" class="cm-secao">
+        <div class="cm-hero">
+          <img src="115.webp" alt="Bolos R$115/kg" loading="lazy">
+          <div class="cm-hero-overlay"></div>
+          <div class="cm-hero-content">
+            <div class="cm-hero-price">
+              <span class="lbl">Faixa de preço</span>
+              <span class="val">R$ 115<small>,00/kg</small></span>
+            </div>
+            <span class="cm-hero-badge">Especiais</span>
+          </div>
+        </div>
+        <div class="cm-intro">
+          <span class="cm-intro-desc">Sabores especiais e combinações exclusivas</span>
+          <span class="cm-intro-count">15 sabores</span>
+        </div>
+        <div class="cm-lista">
+          <div class="cm-item">
+            <span class="cm-item-idx">01</span>
+            <p class="cm-item-nome">Abacaxi com Creme</p>
+            <p class="cm-item-desc">Massa branca, recheio de abacaxi com creme, cobertura de chantilly, coco, abacaxi e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">02</span>
+            <p class="cm-item-nome">Abacaxi com Doce de Leite</p>
+            <p class="cm-item-desc">Massa branca, recheio de abacaxi com doce de leite, cobertura de chantilly, coco, abacaxi e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">03</span>
+            <p class="cm-item-nome">Ameixa com Doce de Leite</p>
+            <p class="cm-item-desc">Massa branca, recheio de ameixa com doce de leite, cobertura de chantilly, geleia de ameixa, coco e ameixa.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">04</span>
+            <p class="cm-item-nome">Bem Casado</p>
+            <p class="cm-item-desc">Massa branca, recheio de doce de leite, cobertura de chantilly, coco, doce de leite e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">05</span>
+            <p class="cm-item-nome">Bicho de Pé</p>
+            <p class="cm-item-desc">Massa branca, recheio de bicho de pé, cobertura de chantilly, raspas de chocolate branco, bicho de pé boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">06</span>
+            <p class="cm-item-nome">Brigadeiro com Mousse de Maracujá</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro e mousse de maracujá, cobertura de chantilly, ganache preta, raspas de chocolate preto e branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">07</span>
+            <p class="cm-item-nome">Casadinho</p>
+            <p class="cm-item-desc">Massa branca, recheio de cocada cremosa e doce de leite, cobertura de chantilly, coco, doce de leite e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">08</span>
+            <p class="cm-item-nome">Dois Amores</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de cocada cremosa e brigadeiro, cobertura de chocolate, granulado, coco, brigadeiro e beijinho boleados e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">09</span>
+            <p class="cm-item-nome">Floresta Branca</p>
+            <p class="cm-item-desc">Massa branca embebida em calda de cereja e rum, recheio de cereja, chantilly, cobertura de chantilly, ganache branca, raspas de chocolate branco e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">10</span>
+            <p class="cm-item-nome">Floresta Negra</p>
+            <p class="cm-item-desc">Massa de chocolate embebida em calda de cereja e rum, recheio de cereja, chantilly, cobertura de chantilly, ganache chocolate preto, raspas de chocolate preto e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">11</span>
+            <p class="cm-item-nome">Frutas</p>
+            <p class="cm-item-desc">Massa branca, recheio de morango, pêssego e abacaxi com creme, cobertura de chantilly, frutas frescas, coco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">12</span>
+            <p class="cm-item-nome">Merengue</p>
+            <p class="cm-item-desc">Massa branca embebida em calda de cereja, recheio de morango com creme, morango com chantilly e suspiro, cobertura de chantilly, geleia de morango e suspiro morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">13</span>
+            <p class="cm-item-nome">Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de morango com creme, cobertura de chantilly, geleia de morango, coco e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">14</span>
+            <p class="cm-item-nome">Mousse de Chocolate</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate, cobertura de chantilly de chocolate, ganache preta, raspas de chocolate preto e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">15</span>
+            <p class="cm-item-nome">Sonho de Valsa</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro com bombom Sonho de Valsa, cobertura de chantilly de chocolate, ganache preta e branca, Sonho de Valsa e cereja.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TIER R$129 ══ -->
+      <div id="t129" class="cm-secao">
+        <div class="cm-hero">
+          <img src="129.webp" alt="Bolos R$129/kg" loading="lazy">
+          <div class="cm-hero-overlay"></div>
+          <div class="cm-hero-content">
+            <div class="cm-hero-price">
+              <span class="lbl">Faixa de preço</span>
+              <span class="val">R$ 129<small>,00/kg</small></span>
+            </div>
+            <span class="cm-hero-badge">Premium</span>
+          </div>
+        </div>
+        <div class="cm-intro">
+          <span class="cm-intro-desc">Combinações sofisticadas &amp; ingredientes selecionados</span>
+          <span class="cm-intro-count">19 sabores</span>
+        </div>
+        <div class="cm-lista">
+          <div class="cm-item">
+            <span class="cm-item-idx">01</span>
+            <p class="cm-item-nome">Bicho de Pé com Brigadeiro</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de bicho de pé e brigadeiro, cobertura de chocolate, granulado, bicho de pé boleado, raspas de chocolate preto e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">02</span>
+            <p class="cm-item-nome">Bicho de Pé com Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de bicho de pé e morango com creme, cobertura de chantilly, raspas de chocolate branco, ganache branca e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">03</span>
+            <p class="cm-item-nome">Chocomix</p>
+            <p class="cm-item-desc">Massa branca, recheio de morango com creme e brigadeiro, cobertura de chantilly, ganache preta, raspas de chocolate preto e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">04</span>
+            <p class="cm-item-nome">Iogurte com Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de morango com iogurte e morango com creme, cobertura de chantilly de iogurte, geleia de morango e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">05</span>
+            <p class="cm-item-nome">Limão com Chocolate</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de limão e mousse de chocolate, cobertura de chantilly com ganache preta e branca, cereja e rodela de limão.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">06</span>
+            <p class="cm-item-nome">Maracujá com Coco</p>
+            <p class="cm-item-desc">Massa branca embebida em calda de maracujá, recheio de cocada cremosa e mousse de maracujá, cobertura de chantilly, geleia de maracujá, raspas de chocolate branco, beijinho boleado, coco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">07</span>
+            <p class="cm-item-nome">Mousse de Chocolate Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de chocolate branco, cobertura de chantilly, ganache branca, raspas de chocolate branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">08</span>
+            <p class="cm-item-nome">Mousse de Chocolate Preto e Branco</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate preto e branco, cobertura de chantilly, ganache preta, raspas de chocolate preto e branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">09</span>
+            <p class="cm-item-nome">Nozes</p>
+            <p class="cm-item-desc">Massa branca, recheio de nozes com doce de leite, cobertura de chantilly, geleia de caramelo, nozes e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">10</span>
+            <p class="cm-item-nome">Olho de Sogra</p>
+            <p class="cm-item-desc">Massa branca, recheio de ameixa com doce de leite e cocada cremosa, cobertura de marshmallow, coco, ameixa e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">11</span>
+            <p class="cm-item-nome">Paçoca</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro creme de doce de leite e pedaços de paçoca, cobertura de chantilly de doce de leite, ganache preta, raspas de chocolate preto, paçoca e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">12</span>
+            <p class="cm-item-nome">Alpes Suíço</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de chocolate branco, morango, marshmallow e suspiro, cobertura de marshmallow, raspas de chocolate branco, morango e suspiro.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">13</span>
+            <p class="cm-item-nome">Beehgui</p>
+            <p class="cm-item-desc">Massa de chocolate embebida em calda de cereja e rum, recheio de mousse de chocolate e cereja, cobertura de chantilly de chocolate, ganache preta, raspas de chocolate preto e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">14</span>
+            <p class="cm-item-nome">Ninho</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de leite ninho, cobertura de chantilly, ganache branca, raspas de chocolate branco, ninho boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">15</span>
+            <p class="cm-item-nome">Ninho com Abacaxi</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de leite ninho e abacaxi com creme, cobertura de chantilly, ganache branca, raspas de chocolate branco, abacaxi, ninho boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">16</span>
+            <p class="cm-item-nome">Letícia</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate e bicho de pé, lascas de chocolate meio amargo, cobertura de chantilly rosa, ganache branca, raspas de chocolate preto e branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">17</span>
+            <p class="cm-item-nome">Trufado Preto</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado de chocolate preto, cobertura de chantilly de chocolate, raspas de chocolate preto e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">18</span>
+            <p class="cm-item-nome">Trufado Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de trufado branco, cobertura de chantilly, raspas de chocolate branco e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">19</span>
+            <p class="cm-item-nome">Delícia de Coco</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate e cocada cremosa, cobertura de ganache preta, raspas de chocolate preto e beijinho boleado.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TIER R$137 ══ -->
+      <div id="t137" class="cm-secao">
+        <div class="cm-hero">
+          <img src="137.webp" alt="Bolos R$137/kg" loading="lazy">
+          <div class="cm-hero-overlay"></div>
+          <div class="cm-hero-content">
+            <div class="cm-hero-price">
+              <span class="lbl">Faixa de preço</span>
+              <span class="val">R$ 137<small>,00/kg</small></span>
+            </div>
+            <span class="cm-hero-badge">Excellence</span>
+          </div>
+        </div>
+        <div class="cm-intro">
+          <span class="cm-intro-desc">Criações exclusivas com ingredientes nobres</span>
+          <span class="cm-intro-count">30 sabores</span>
+        </div>
+        <div class="cm-lista">
+          <div class="cm-item">
+            <span class="cm-item-idx">01</span>
+            <p class="cm-item-nome">Ninho com Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de leite ninho e morango com creme, cobertura de chantilly, ganache branca, ninho boleado e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">02</span>
+            <p class="cm-item-nome">Brigadeiro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de brigadeiro branco, cobertura de chantilly, ganache branca, raspas de chocolate branco, brigadeiro branco boleado e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">03</span>
+            <p class="cm-item-nome">Camafeu de Nozes</p>
+            <p class="cm-item-desc">Massa branca, recheio de trufado branco, nozes com doce de leite, cobertura de chantilly, ganache branca, nozes e raspas de chocolate branco e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">04</span>
+            <p class="cm-item-nome">Choconozes</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado com nozes, cobertura de chantilly de chocolate, raspas de chocolate preto, nozes e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">05</span>
+            <p class="cm-item-nome">Café</p>
+            <p class="cm-item-desc">Massa branca embebida em calda de café, recheio de café e mousse preto, cobertura chantilly de café, ganache preta, raspas de chocolate preto, café boleado e grão de café.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">06</span>
+            <p class="cm-item-nome">Ninho com Nutella</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de leite ninho e Nutella, cobertura de chantilly, ganache preta e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">07</span>
+            <p class="cm-item-nome">Limão com Brigadeiro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de limão e brigadeiro branco, cobertura de chantilly, ganache branca, cereja e rodelas de limão.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">08</span>
+            <p class="cm-item-nome">Sonho de Morango</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate e Sonho de Valsa, mousse de chocolate branco e morango, cobertura de chantilly de chocolate, ganache preta, morango e Sonho de Valsa.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">09</span>
+            <p class="cm-item-nome">Maracujá com Brigadeiro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse de maracujá e brigadeiro branco, cobertura de chantilly, raspas de chocolate branco, geleia de maracujá e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">10</span>
+            <p class="cm-item-nome">Morango com Brigadeiro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de morango com creme e brigadeiro branco, cobertura de chantilly, ganache branca, brigadeiro branco boleado, raspas de chocolate branco e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">11</span>
+            <p class="cm-item-nome">Nutella com Brigadeiro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de brigadeiro branco com Nutella, cobertura de chantilly e ganache branca e preta e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">12</span>
+            <p class="cm-item-nome">Trufado Preto de Morango</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado de chocolate e morango, cobertura de chantilly de chocolate, raspas de chocolate preto e morango.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">13</span>
+            <p class="cm-item-nome">Trufado Branco de Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de trufado branco com morango, cobertura de chantilly, raspas de chocolate branco e morango.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">14</span>
+            <p class="cm-item-nome">Trufado Branco e Preto</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado preto e trufado branco, pedaços de chocolate preto e branco, cobertura de chantilly de chocolate, raspas de chocolate preto e branco e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">15</span>
+            <p class="cm-item-nome">Ouro Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de brigadeiro e mousse de chocolate branco com Ouro Branco, cobertura de chantilly, ganache branca e preta, Ouro Branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">16</span>
+            <p class="cm-item-nome">Ovomaltine</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse preto e mousse branco, pasta de ovomaltine, ovomaltine e rocks, cobertura de chantilly de chocolate, ganache preta, brigadeiro boleado com amendoim e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">17</span>
+            <p class="cm-item-nome">Chocoberry</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro branco, geleia de morango e mousse de chocolate preto, cobertura de chantilly de chocolate, ganache preta, brigadeiro branco boleado e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">18</span>
+            <p class="cm-item-nome">Surpresa de Uva</p>
+            <p class="cm-item-desc">Massa branca, recheio de brigadeiro branco e pedaços de uva verde, cobertura de chantilly, ganache preta e branca, brigadeiro branco boleado e uva verde.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">19</span>
+            <p class="cm-item-nome">Trufado de Ninho</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado de chocolate preto e mousse de leite ninho, cobertura de chantilly de chocolate, ganache preta e branca, raspas de chocolate preto e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">20</span>
+            <p class="cm-item-nome">Delícia de Mousse Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de mousse branco, morango banhado em limão e açúcar, geleia de morango, cobertura de chantilly, ganache branca, raspas de chocolate branco, geleia de morango e morango.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">21</span>
+            <p class="cm-item-nome">Cappuccino</p>
+            <p class="cm-item-desc">Massa de chocolate embebida com calda de café, canela polvilhada, recheio de doce de leite e brigadeiro de café, cobertura de chantilly de café, doce de leite e grão de café.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">22</span>
+            <p class="cm-item-nome">Trufado com Crocante</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado e crocante de amendoim com doce de leite, cobertura de chantilly de chocolate, ganache preta, crocante e trufado boleado com amendoim e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">23</span>
+            <p class="cm-item-nome">Duo</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de brigadeiro branco e brigadeiro de chocolate, cobertura de chantilly de chocolate, ganache branca e brigadeiros boleados.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">24</span>
+            <p class="cm-item-nome">Napolitano</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de bicho de pé e mousse branco, cobertura de chantilly rosa, ganache preta, raspas de chocolate preto e branco e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">25</span>
+            <p class="cm-item-nome">Choconinho</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate preto e mousse de leite ninho, cobertura de chantilly, ganache preta, ninho boleado e raspas de chocolate preto.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">26</span>
+            <p class="cm-item-nome">Cherry Branco</p>
+            <p class="cm-item-desc">Massa branca, recheio de trufado branco, chantilly, cereja e pedaços de chocolate branco, cobertura de chantilly, ganache branca, raspas de chocolate branco e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">27</span>
+            <p class="cm-item-nome">Cherry Preto</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de trufado preto, chantilly, cereja e pedaços de chocolate, cobertura de chantilly de chocolate, ganache preta, raspas de chocolate preto e cereja.</p>
+            <span class="cm-alcool">contém álcool</span>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">28</span>
+            <p class="cm-item-nome">Jufeh</p>
+            <p class="cm-item-desc">Massa de chocolate, recheio de mousse de chocolate e doce de leite, cobertura de chantilly de chocolate, ganache preta, raspas de chocolate preto, doce de leite e cereja.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">29</span>
+            <p class="cm-item-nome">Doce Tentação</p>
+            <p class="cm-item-desc">Massa de chocolate recheada com mousse de chocolate preto e morangos, brigadeiro branco e morangos, coberta com ganache de chocolate, raspas de chocolate branco e morangos.</p>
+          </div>
+          <div class="cm-item">
+            <span class="cm-item-idx">30</span>
+            <p class="cm-item-nome">Crocante com Morango</p>
+            <p class="cm-item-desc">Massa branca, recheio de crocante de amendoim com doce de leite e morango com creme, cobertura de chantilly, amendoim e morango.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- fim cm-body -->
+  </div><!-- fim cm-painel -->
+</div><!-- fim modal -->
+
+<script>
+function abrirCardapio() {
+  const m = document.getElementById('cardapio-modal');
+  m.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharCardapio() {
+  const m = document.getElementById('cardapio-modal');
+  m.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+function trocarTier(btn, id) {
+  // pills
+  document.querySelectorAll('.cm-pill').forEach(p => p.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  // seções
+  document.querySelectorAll('.cm-secao').forEach(s => s.classList.remove('visivel'));
+  document.getElementById(id).classList.add('visivel');
+  // scroll topo do body
+  document.querySelector('.cm-body').scrollTop = 0;
+}
+// Fechar clicando fora do painel
+document.getElementById('cardapio-modal').addEventListener('click', function(e){
+  if (e.target === this) fecharCardapio();
+});
+// ESC fecha
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') fecharCardapio();
+});
+</script>
+
+</body>
+</html>
