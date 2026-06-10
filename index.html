@@ -1791,15 +1791,22 @@ function onAllLoaded() {
   setTimeout(() => { loaderEl.classList.add('hidden'); startRAF(); }, 500);
 }
 
-const CRITICAL = 6;  // frames to load before showing anything
+const IS_MOBILE  = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+const FRAME_STEP = IS_MOBILE ? 3 : 1; // mobile: 1 a cada 3 frames (~40 imagens)
+
+// Lista de índices que serão carregados
+const LOAD_FRAMES = [];
+for (let i = 0; i < TOTAL_FRAMES; i += FRAME_STEP) LOAD_FRAMES.push(i);
+const LOAD_COUNT = LOAD_FRAMES.length;
+
 function loadFrame(i) {
   const img = new Image();
   const onDone = () => {
     loaded++;
-    const pct = Math.round(loaded / TOTAL_FRAMES * 100);
+    const pct = Math.round(loaded / LOAD_COUNT * 100);
     loaderFill.style.width = pct + '%';
     loaderLabel.textContent = pct + '%';
-    if (loaded === TOTAL_FRAMES) onAllLoaded();
+    if (loaded === LOAD_COUNT) onAllLoaded();
   };
   img.onload  = onDone;
   img.onerror = onDone;
@@ -1807,18 +1814,22 @@ function loadFrame(i) {
   images[i] = img;
 }
 
-// Safety timeout: force-complete loader after 12s in case of slow/failed mobile connections
+// Primeiros frames imediatamente, resto adiado
+const CRIT_COUNT = IS_MOBILE ? 2 : 6;
+for (let j = 0; j < Math.min(CRIT_COUNT, LOAD_FRAMES.length); j++) loadFrame(LOAD_FRAMES[j]);
+const loadRest = () => { for (let j = CRIT_COUNT; j < LOAD_FRAMES.length; j++) loadFrame(LOAD_FRAMES[j]); };
+(!IS_MOBILE && requestIdleCallback)
+  ? requestIdleCallback(loadRest, { timeout: 3000 })
+  : setTimeout(loadRest, IS_MOBILE ? 200 : 100);
+
+// Segurança: força o loader a fechar após 12s
 setTimeout(() => { if (!loaderEl.classList.contains('hidden')) onAllLoaded(); }, 12000);
-// Critical path: first few frames synchronously
-for (let i = 0; i < Math.min(CRITICAL, TOTAL_FRAMES); i++) loadFrame(i);
-// Rest: deferred to avoid blocking initial render
-requestIdleCallback
-  ? requestIdleCallback(() => { for (let i = CRITICAL; i < TOTAL_FRAMES; i++) loadFrame(i); }, { timeout: 3000 })
-  : setTimeout(() => { for (let i = CRITICAL; i < TOTAL_FRAMES; i++) loadFrame(i); }, 100);
 
 // ── Draw cover-fit at full DPR resolution ────────────────────────────────────
 function renderFrame(idx) {
-  const img = images[idx];
+  // No mobile, encaixa no frame mais próximo que foi carregado (passo de 3)
+  const snapped = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.round(Math.round(idx / FRAME_STEP) * FRAME_STEP)));
+  const img = images[snapped];
   if (!img || !img.complete || !img.naturalWidth) return;
   const iAR = img.naturalWidth / img.naturalHeight;
   const cAR = W / H;
