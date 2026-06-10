@@ -1794,16 +1794,21 @@ function onAllLoaded() {
 const CRITICAL = 6;  // frames to load before showing anything
 function loadFrame(i) {
   const img = new Image();
-  img.onload = () => {
+  const onDone = () => {
     loaded++;
     const pct = Math.round(loaded / TOTAL_FRAMES * 100);
     loaderFill.style.width = pct + '%';
     loaderLabel.textContent = pct + '%';
     if (loaded === TOTAL_FRAMES) onAllLoaded();
   };
+  img.onload  = onDone;
+  img.onerror = onDone;
   img.src = FRAMES[i];
   images[i] = img;
 }
+
+// Safety timeout: force-complete loader after 12s in case of slow/failed mobile connections
+setTimeout(() => { if (!loaderEl.classList.contains('hidden')) onAllLoaded(); }, 12000);
 // Critical path: first few frames synchronously
 for (let i = 0; i < Math.min(CRITICAL, TOTAL_FRAMES); i++) loadFrame(i);
 // Rest: deferred to avoid blocking initial render
